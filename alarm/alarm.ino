@@ -11,19 +11,12 @@
 #define LED 8
 #define RST_PIN 9
 #define SS_PIN 10
-/*
-#define solenoid_push 40
-#define solenoid_pull 41
-/*
-#define D2_OUT 42
-#define D3_OUT 43
-*/
+
 RFID rfid(SS_PIN, RST_PIN);
 String rfidCard;
 LiquidCrystal lcd(31, 30, 28, 26, 24, 22);
 
 int Capteur= 6;
-
 int screenOffMsg =0;
 String password="1234";
 String tempPassword;
@@ -54,29 +47,12 @@ void setup() {
   lcd.begin(20,4); 
   pinMode(LED, OUTPUT);
   pinMode(Capteur,INPUT);
-   //initialise arduino inputs
   pinMode(RF_D0, INPUT_PULLUP);
   pinMode(RF_D1, INPUT_PULLUP);
   pinMode(RF_D2, INPUT_PULLUP);
   pinMode(RF_D3, INPUT_PULLUP);
   SPI.begin();
   rfid.init();
-
-  
-  //initialise arduino outputs
-  /*
-  pinMode(solenoid_push, OUTPUT);
-  digitalWrite(solenoid_push, LOW); //set output to LOW
-  pinMode(solenoid_pull, OUTPUT);
-  digitalWrite(solenoid_pull, LOW); //set output to LOW
-  /*
-  pinMode(D2_OUT, OUTPUT);
-  digitalWrite(D2_OUT, LOW); //set output to LOW
-  pinMode(D3_OUT, OUTPUT);
-  digitalWrite(D3_OUT, LOW); //set output to LOW
-  */
-
-
 }
  void loop() {
 if (activateAlarm) 
@@ -130,7 +106,8 @@ if (activateAlarm)
       digitalWrite(LED, LOW);
       activateAlarm = true; 
      }
-    else if (keypressed =='B') {
+    else if (keypressed =='B') 
+      {
       lcd.clear();
       int i=1;
       digitalWrite(LED, HIGH);
@@ -143,36 +120,42 @@ if (activateAlarm)
       lcd.print(">");
       passChangeMode = true;
       passChanged = true;   
+      
       while(passChanged) {      
       keypressed = myKeypad.getKey();
-if (keypressed != NO_KEY){
+      if (keypressed != NO_KEY)
+      {
         if (keypressed == '0' || keypressed == '1' || keypressed == '2' || keypressed == '3' ||
             keypressed == '4' || keypressed == '5' || keypressed == '6' || keypressed == '7' ||
-            keypressed == '8' || keypressed == '9' ) {
-         tempPassword += keypressed;
-         lcd.setCursor(i,1);
-         lcd.print("*");
-         i++;
-         digitalWrite(LED, HIGH);
-         delay(1000);
-         digitalWrite(LED, LOW);
+            keypressed == '8' || keypressed == '9' ) 
+            {
+               tempPassword += keypressed;
+               lcd.setCursor(i,1);
+               lcd.print("*");
+               i++;
+               digitalWrite(LED, HIGH);
+               delay(1000);
+               digitalWrite(LED, LOW);
+            }
+      }
+      if (i > 5 || keypressed == '#') 
+        {
+          tempPassword = "";
+          i=1;
+          lcd.clear();
+          lcd.setCursor(0,0);
+          lcd.print("Current Password");
+          lcd.setCursor(0,1);
+          lcd.print(">"); 
         }
-      }
-      if (i > 5 || keypressed == '#') {
-        tempPassword = "";
-        i=1;
-        lcd.clear();
-        lcd.setCursor(0,0);
-        lcd.print("Current Password");
-        lcd.setCursor(0,1);
-        lcd.print(">"); 
-      }
-      if ( keypressed == '*') {
+      if ( keypressed == '*') 
+      {
         i=1;
         digitalWrite(LED, HIGH);
         delay(1000);
         digitalWrite(LED, LOW);
-        if (password == tempPassword) {
+        if (password == tempPassword) 
+        {
           tempPassword="";
           lcd.clear();
           lcd.setCursor(0,0);
@@ -206,16 +189,17 @@ if (keypressed != NO_KEY){
               lcd.setCursor(0,1);
               lcd.print(">");
             }
-            if ( keypressed == '*') {
-              i=1;
-              digitalWrite(LED, HIGH);
-              delay(1000);
-              digitalWrite(LED, LOW);
-              password = tempPassword;
-              passChangeMode = false;
-              passChanged = false;
-              screenOffMsg = 0;
-            }            
+            if ( keypressed == '*') 
+              {
+                i=1;
+                digitalWrite(LED, HIGH);
+                delay(1000);
+                digitalWrite(LED, LOW);
+                password = tempPassword;
+                passChangeMode = false;
+                passChanged = false;
+                screenOffMsg = 0;
+              }            
           }
         }
       }
@@ -254,22 +238,12 @@ void enterPassword() {
         lcd.setCursor(0,1);
         lcd.print("Pass>");
       }
-
-      //---------------------------
-      if (digitalRead(RF_D2) == HIGH) {
-        activated = false;
-          alarmActivated = false;
-          digitalWrite(LED, LOW);
-          screenOffMsg = 0;
-      }
-      //------------------------
-      if ( keypressed == '*') {
+      if ( keypressed == '*' || digitalRead(RF_D2) == HIGH) {
         if ( tempPassword == password ) {
           activated = false;
           alarmActivated = false;
           digitalWrite(LED, LOW);
-          screenOffMsg = 0;
-           
+          screenOffMsg = 0;    
         }
         else if (tempPassword != password) {
           lcd.setCursor(0,1);
