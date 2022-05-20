@@ -123,9 +123,6 @@ if (activateAlarm)
       
       while(passChanged) {      
       keypressed = myKeypad.getKey();
-
-      tempPassword = enterstring(i,keypressed);
-      /*
       if (keypressed != NO_KEY)
       {
         if (keypressed == '0' || keypressed == '1' || keypressed == '2' || keypressed == '3' ||
@@ -141,10 +138,6 @@ if (activateAlarm)
                digitalWrite(LED, LOW);
             }
       }
-      */
-
-
-      
       if (i > 5 || keypressed == '#') 
         {
           tempPassword = "";
@@ -214,28 +207,6 @@ if (activateAlarm)
    }
  }
 }
-
-String enterstring(int i,char keypressed)
-{
-      if (keypressed != NO_KEY)
-      {
-        if (keypressed == '0' || keypressed == '1' || keypressed == '2' || keypressed == '3' ||
-            keypressed == '4' || keypressed == '5' || keypressed == '6' || keypressed == '7' ||
-            keypressed == '8' || keypressed == '9' ) 
-            {
-               tempPassword += keypressed;
-               lcd.setCursor(i,1);
-               lcd.print("*");
-               i++;
-               digitalWrite(LED, HIGH);
-               delay(1000);
-               digitalWrite(LED, LOW);
-            }
-      }
-      return tempPassword;
-}
-
-
 void enterPassword() {
   int k=5;
   tempPassword = "";
